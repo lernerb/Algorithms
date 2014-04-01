@@ -142,7 +142,14 @@ class Graph:
         scclist = self.getSCC(node1)
         printError(scclist)
         for nodething in scclist:
-            self.isSCC(node1, nodething)
+            newlist = self.getSCC(nodething)
+            newlistRemoveDuplicates = []
+            for node in newlist:
+                if node not in scclist:
+                    newlistRemoveDuplicates.append(node)
+            scclist = newlistRemoveDuplicates
+
+            #self.isSCC(node1, nodething)
             # WE NEED TO ITERATE HERE SOMEHOW????
             printError('this is a match')
         
