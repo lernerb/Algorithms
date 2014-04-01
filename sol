@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, io, time, string, re
+import sys, io, time, string
 
 
 def printError(error):
