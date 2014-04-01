@@ -83,7 +83,7 @@ class Graph:
 def main(argv):
     argc = len(argv)
     if (argc) > 0 :
-        printError('Must supply input to program as ./sol < INPUTFILE > OUTPUTFILE')
+        print('Must supply input to program as ./sol < INPUTFILE > OUTPUTFILE')
         return -1
     sat2()
     return 0
