@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, io, time, string
+import sys, string
 
 def printSatisfiable(satisfiable):
     sys.stdout.write("SATISFIABLE") if satisfiable else sys.stdout.write("NOT SATISFIABLE")
