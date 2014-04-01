@@ -17,10 +17,9 @@ def printSatisfiable(boolean):
     """
     if (boolean):
         sys.stdout.write("SATISFIABLE")
-        printError("satsat")
     else:
         sys.stdout.write("NOT SATISFIABLE")
-        printError("not sat")
+       
 
 
 def sat2():
@@ -50,23 +49,23 @@ def sat2():
         if (newstr[1] == "!="):
             tempTuple = newstr[0], newstr[2]
             unsatisfiableList.append(tempTuple)
-            printError('notequals')
+    #        printError('notequals')
         else:
             myGraph.addVertex(newstr[0])
             myGraph.addVertex(newstr[2])
             myGraph.addEdge(newstr[0], newstr[2])
-            printError('equals')
+   #         printError('equals')
             
-    printError(myGraph)
+    #printError(myGraph)
 
     # Check to see if any unsatisfiable assignment makes this whole thing false
     for tuple in unsatisfiableList:
-        printError(tuple[0])
-        printError(tuple[1])
+    #    printError(tuple[0])
+    #    printError(tuple[1])
         if (myGraph.isSCC(tuple[0],tuple[1])):
-            printError(tuple[0])
+     #       printError(tuple[0])
             isSatisfiable = False
-            printError('totally not satisfiable')
+  #          printError('totally not satisfiable')
             break
 
 
@@ -130,17 +129,17 @@ class Graph:
 
     def getSCC(self, node):
         if node not in self.vertexKeys:
-            printError('NOT IN GETSCC')
+ #           printError('NOT IN GETSCC')
             return []
         else:
-            printError('IN SCC, FIX YOUR SHIT BRANDON')
+ #           printError('IN SCC, FIX YOUR SHIT BRANDON')
             return self.vertexList[self.vertexKeys.index(node)].getConnections()
 
     def isSCC(self, node1, node2):
-        printError('checking for isSCC for nodes' + node1 + node2)
+#        printError('checking for isSCC for nodes' + node1 + node2)
         
         scclist = self.getSCC(node1)
-        printError(scclist)
+     #   printError(scclist)
         for nodething in scclist:
             newlist = self.getSCC(nodething)
             newlistRemoveDuplicates = []
@@ -151,7 +150,7 @@ class Graph:
 
             #self.isSCC(node1, nodething)
             # WE NEED TO ITERATE HERE SOMEHOW????
-            printError('this is a match')
+      #      printError('this is a match')
         
         if node2 in scclist:
             return True
