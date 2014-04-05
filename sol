@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, string
+import sys, string, gc
 
 def printSatisfiable(satisfiable):
     sys.stdout.write("SATISFIABLE") if satisfiable else sys.stdout.write("NOT SATISFIABLE")
@@ -16,7 +16,7 @@ def sat2():
     myGraph = Graph()
 
     for x in range (1, numberOfVariables+1):
-        myGraph.addVertex("x" + str(x))
+        myGraph.addVertex(x)
 
     unsatisfiableList = []
     isSatisfiable = True
@@ -25,114 +25,45 @@ def sat2():
     for line in sys.stdin:
         newstr = str.split(line)
         if (newstr[1] == "!="):
-            tempTuple = newstr[0], newstr[2]
+            tempTuple = newstr[0][1:], newstr[2][1:]
             unsatisfiableList.append(tempTuple)
         else:
-            myGraph.addEdge(newstr[0], newstr[2])
+            myGraph.addEdge(int(newstr[0][1:]), int(newstr[2][1:]))
 
-#    printError(unsatisfiableList)
     # Check to see if any unsatisfiable assignment makes this whole thing false
     for tuple in unsatisfiableList:
         path = []
-        myGraph.DFS(myGraph, tuple[0], path)
-        #printError("doing a dfs search")
-#        printError(path)
-
-        if tuple[1] in path:
+        myGraph.DFS(myGraph, int(tuple[0]), path)        
+        if int(tuple[1]) in path:
             isSatisfiable = False
             break
-#        if (myGraph.isSCC(myGraph, tuple[0], tuple[1])):
-#            isSatisfiable = False
-#            break
 
     # Return the output to the program
     printSatisfiable(isSatisfiable)
 
-class Vertex:
-    def __init__(self, key):
-        self.id = key
-        self.neighbors = []
-
-    def addNeighbor(self, nbr):
-        self.neighbors.append(nbr)
-
-    def getNeighbors(self):
-        return self.neighbors
-
 class Graph:
     def __init__(self):
-        self.vertexKeys = []
         self.vertexList = []
 
     def addVertex(self, key):
-        self.vertexKeys.append(key)
-        self.vertexList.insert(self.vertexKeys.index(key), Vertex(key))
- #       printError("added key" + key)
+        self.vertexList.append([])
 
     def addEdge(self, fromNode, toNode):
-        self.vertexList[self.vertexKeys.index(fromNode)].addNeighbor(toNode)
-        self.vertexList[self.vertexKeys.index(toNode)].addNeighbor(fromNode)
+        self.vertexList[fromNode-1].append(toNode)
+        self.vertexList[toNode-1].append(fromNode)
 
     def getSCC(self, node):
-        return self.vertexList[self.vertexKeys.index(node)].getNeighbors()
-
+        node = int(node)
+        return self.vertexList[node-1]
 
     def DFS(self, graph, start, path):
         if start in path:
             return False
+
         path.append(start)
         for each in self.getSCC(start):
             if each not in path:
                 self.DFS(graph, each, path)
-
-
-    def isSCC(self, graph, node1, node2):
-       
-        visited = []
-        visited.append(node1)
-
-        for vertex in self.getSCC(node1):
-            if vertex not in visited:
-                visited.append(vertex)
-
-        if node2 in visited:
-            return True
-        else:
-            return False
-           
-#        seenlist.append(node1)
-#        printError("seen"+node1)
-#        scclist = self.getSCC(node1)
-
-#        for nodething in scclist:
-
-#            if nodething not in seenlist:
-#                seenlist.append(nodething)
-#                found = self.isSCC(nodething, node2, seenlist)
-#                if found:
-#                    return True
-
-#            newlist = self.getSCC(nodething)
-
-#            for node in newlist:
-#                if node not in seenlist:
-#                    seenlist.append(node)
-#                scclist = seenlist
-
-        if node2 in seenlist:
-            return True
-        else:
-            return False
-
-
-def printError(error):
-    """
-    Prints errors after appending 'Error: ' to the front of them.
-    Arguments: error -- The error string to be printed
-    This is for debugging purposes only
-    """
-    print >> sys.stderr,  error
-
 
 def main(argv):
     argc = len(argv)
