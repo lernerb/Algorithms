@@ -10,7 +10,14 @@ def sat2():
     Line 1 -- N M, Lines 2 through M+1 -- Xi OP Xj
     """
     firstLineString = sys.stdin.readline()
+    numberArray =  [int(s) for s in firstLineString.split() if s.isdigit()]
+    numberOfVariables = numberArray[0]
+    numberOfConstraints = numberArray[1]
     myGraph = Graph()
+
+    for x in range (1, numberOfVariables+1):
+        myGraph.addVertex("x" + str(x))
+
     unsatisfiableList = []
     isSatisfiable = True
 
@@ -21,15 +28,22 @@ def sat2():
             tempTuple = newstr[0], newstr[2]
             unsatisfiableList.append(tempTuple)
         else:
-            myGraph.addVertex(newstr[0])
-            myGraph.addVertex(newstr[2])
             myGraph.addEdge(newstr[0], newstr[2])
 
+#    printError(unsatisfiableList)
     # Check to see if any unsatisfiable assignment makes this whole thing false
     for tuple in unsatisfiableList:
-        if (myGraph.isSCC(tuple[0],tuple[1])):
+        path = []
+        myGraph.DFS(myGraph, tuple[0], path)
+        #printError("doing a dfs search")
+#        printError(path)
+
+        if tuple[1] in path:
             isSatisfiable = False
             break
+#        if (myGraph.isSCC(myGraph, tuple[0], tuple[1])):
+#            isSatisfiable = False
+#            break
 
     # Return the output to the program
     printSatisfiable(isSatisfiable)
@@ -40,8 +54,7 @@ class Vertex:
         self.neighbors = []
 
     def addNeighbor(self, nbr):
-        if nbr not in self.neighbors:
-            self.neighbors.append(nbr)
+        self.neighbors.append(nbr)
 
     def getNeighbors(self):
         return self.neighbors
@@ -52,33 +65,74 @@ class Graph:
         self.vertexList = []
 
     def addVertex(self, key):
-        if key not in self.vertexKeys:
-            self.vertexKeys.append(key)
-            self.vertexList.insert(self.vertexKeys.index(key), Vertex(key))
+        self.vertexKeys.append(key)
+        self.vertexList.insert(self.vertexKeys.index(key), Vertex(key))
+ #       printError("added key" + key)
 
     def addEdge(self, fromNode, toNode):
         self.vertexList[self.vertexKeys.index(fromNode)].addNeighbor(toNode)
         self.vertexList[self.vertexKeys.index(toNode)].addNeighbor(fromNode)
 
     def getSCC(self, node):
-        if node not in self.vertexKeys:
-            return []
-        else:
-            return self.vertexList[self.vertexKeys.index(node)].getNeighbors()
+        return self.vertexList[self.vertexKeys.index(node)].getNeighbors()
 
-    def isSCC(self, node1, node2):
-        scclist = self.getSCC(node1)
-        for nodething in scclist:
-            newlist = self.getSCC(nodething)
-            newlistRemoveDuplicates = []
-            for node in newlist:
-                if node not in scclist:
-                    newlistRemoveDuplicates.append(node)
-            scclist = newlistRemoveDuplicates
-        if node2 in scclist:
+
+    def DFS(self, graph, start, path):
+        if start in path:
+            return False
+        path.append(start)
+        for each in self.getSCC(start):
+            if each not in path:
+                self.DFS(graph, each, path)
+
+
+    def isSCC(self, graph, node1, node2):
+       
+        visited = []
+        visited.append(node1)
+
+        for vertex in self.getSCC(node1):
+            if vertex not in visited:
+                visited.append(vertex)
+
+        if node2 in visited:
             return True
         else:
             return False
+           
+#        seenlist.append(node1)
+#        printError("seen"+node1)
+#        scclist = self.getSCC(node1)
+
+#        for nodething in scclist:
+
+#            if nodething not in seenlist:
+#                seenlist.append(nodething)
+#                found = self.isSCC(nodething, node2, seenlist)
+#                if found:
+#                    return True
+
+#            newlist = self.getSCC(nodething)
+
+#            for node in newlist:
+#                if node not in seenlist:
+#                    seenlist.append(node)
+#                scclist = seenlist
+
+        if node2 in seenlist:
+            return True
+        else:
+            return False
+
+
+def printError(error):
+    """
+    Prints errors after appending 'Error: ' to the front of them.
+    Arguments: error -- The error string to be printed
+    This is for debugging purposes only
+    """
+    print >> sys.stderr,  error
+
 
 def main(argv):
     argc = len(argv)
